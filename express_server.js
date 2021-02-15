@@ -15,9 +15,9 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: "http://localhost:8080/urls/b2xVn2" };
+  const templateVars = { shortURL: req.params.shortURL, longURL: "http://lighthouselabs.ca" };
   res.render("urls_show", templateVars);
-})
+});
 
 app.get("/", (req, res) => {
   res.send("Hello!");
