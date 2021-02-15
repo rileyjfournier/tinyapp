@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/rileyjfournier/tinyapp/issues"
   },
-  "homepage": "https://github.com/rileyjfournier/tinyapp#readme"
+  "homepage": "https://github.com/rileyjfournier/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
