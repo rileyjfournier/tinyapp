@@ -53,8 +53,16 @@ app.get("/u/:shortURL", (req, res) => {  // clicking shortURL links to longURL
 });
 
 
+// post method using edit button to redirect to specified shortURL for editing purposes
+app.post("/urls/:shortURL/edit", (req, res) => {
+  console.log(`trying to edit!`)
+  res.redirect(`/urls/${req.params.shortURL}`);
+})
+
+
 // post method with use of button (see urls_index.ejs for button incorportation) to delete any shortURL
 app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(`trying to delete!`)
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
 })
