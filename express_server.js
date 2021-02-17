@@ -22,23 +22,23 @@ function generateRandomString() {
     string += characters.charAt(Math.floor(Math.random() * characters_length));
   }
   return string;
-};
+}
 
 // page displaying all shortURLs with their original, longURL
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
-app.post("/urls", (req, res) => {
-  const shortenedURL = generateRandomString();
-  urlDatabase[shortenedURL] = req.body.longURL;
-  res.redirect(`/urls/${shortenedURL}`);
-})
 
 
 // page to create a new shortURL
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
+});
+app.post("/urls/new", (req, res) => {
+  const shortenedURL = generateRandomString();
+  urlDatabase[shortenedURL] = req.body.longURL;
+  res.redirect(`/urls/${shortenedURL}`);
 });
 
 
@@ -51,24 +51,29 @@ app.get("/u/:shortURL", (req, res) => {  // clicking shortURL links to longURL
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+app.post("/urls/:shortURL", (req, res) => {
+  urlDatabase[req.body.shortURL] = req.body.longURL;
+  res.redirect(`/urls/${req.body.shortURL}`);
+});
 
 
 // post method using edit button to redirect to specified shortURL for editing purposes
 app.post("/urls/:shortURL/edit", (req, res) => {
-  console.log(`trying to edit!`)
   res.redirect(`/urls/${req.params.shortURL}`);
-})
+});
 
 
 // post method with use of button (see urls_index.ejs for button incorportation) to delete any shortURL
 app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(`trying to delete!`)
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
-})
+});
 
 
 
+
+
+// other routes ...
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
