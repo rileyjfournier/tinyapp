@@ -11,7 +11,7 @@
       </div>
     </div>
     <% if (username) { %>
-    <p class="nav-item">logged in as <%= username %></p>
+    <span class="navbar-text" style="padding-right: 1em;">Logged in as <%= username %></span>
       <form class="form-inline" action="/logout" method="POST">
         <input type="hidden" name="username" value="username">
         <button type="submit" value="username" class="btn btn-outline-primary">Logout</button>
@@ -20,6 +20,9 @@
       <form class="form-inline" action="/login" method="POST">
         <input type="text" name="username" value="username" class="form-control mr-sm-2" placeholder="Username">
         <button type="submit" value="username" class="btn btn-outline-primary">Login</button>
+      </form>
+      <form class="form-inline" action="/registerLink" method="POST" style="padding-left: 5px;">
+        <button type="submit" class="btn btn-outline-danger">Register</button>
       </form>
     <% } %>
   </nav>

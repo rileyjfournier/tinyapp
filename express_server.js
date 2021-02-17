@@ -48,6 +48,21 @@ app.post("/logout", (req, res) => {
 });
 
 
+// registration button to link to registration page
+app.post("/registerLink", (req, res) => {
+  res.redirect("/register");
+});
+
+
+// registration page
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+app.post("/register", (req, res) => {
+  console.log(req.body);
+});
+
+
 // page to create a new shortURL
 app.get("/urls/new", (req, res) => {
   const templateVars = { 
