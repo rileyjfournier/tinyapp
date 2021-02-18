@@ -15,22 +15,22 @@ const urlDatabase = {
   // "1245xK": { longURL: "http://www.google.ca", userID: "othername"}
 };
 
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "yadayada"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "moreyada"
   }
 };
 
-// this function will return an object identical to urlDatabase, 
+// this function will return an object identical to urlDatabase,
 // but will only include urls from specified userID
-function urlsForUser(id) { 
+function urlsForUser(id) {
   let usersUrls = [];
   let usersDatabase = {};
   for (const url in urlDatabase) {
@@ -39,13 +39,13 @@ function urlsForUser(id) {
     }
   }
   for (const obj of usersUrls) {
-    usersDatabase[obj.shortURL] = { longURL: obj.longURL, userID: id }
+    usersDatabase[obj.shortURL] = { longURL: obj.longURL, userID: id };
   }
   return usersDatabase;
-};
+}
 
 function loginChecker(email, password) {
-  let emailMatch = false; 
+  let emailMatch = false;
   let passwordMatch = false;
   let user_id;
   for (const id in users) {
@@ -62,7 +62,7 @@ function loginChecker(email, password) {
   } else {
     return false;
   }
-};
+}
 
 function generateRandomString() {
   let string = "";
@@ -90,9 +90,9 @@ app.get("/urls", (req, res) => {
     for (const user in users) {
       if (req.cookies['user_id'] === user) {
         const userUrlDatabase = urlsForUser(user);
-        const templateVars = { 
+        const templateVars = {
           user: users[req.cookies['user_id']],
-          urls: userUrlDatabase 
+          urls: userUrlDatabase
         };
         res.render("urls_index", templateVars);
         break;
@@ -104,16 +104,16 @@ app.get("/urls", (req, res) => {
 
 // if user isn't logged in and is trying to use app, prompts to register or login
 app.get("/loginPrompt", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     user: users[req.cookies['user_id']]
   };
   res.render("loginPrompt", templateVars);
-})
+});
 
 
-// login && logout with cookie management 
+// login && logout with cookie management
 app.get("/login", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     user: users[req.cookies['user_id']]
   };
   res.render("login", templateVars);
@@ -121,14 +121,14 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   if (loginChecker(req.body.email, req.body.password) === false) {
-    res.sendStatus(403)
+    res.sendStatus(403);
   } else {
     let currentUser;
     currentUser = loginChecker(req.body.email, req.body.password);
     res.cookie("user_id", currentUser);
     res.redirect("/urls");
   }
-})
+});
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
@@ -150,14 +150,14 @@ app.post("/registerLink", (req, res) => {
 
 // registration page
 app.get("/register", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     user: users[req.cookies['user_id']]
   };
   res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
-  if (req.body.email.length === 0 || req.body.password.length === 0) {   // make me into a function *******
+  if (req.body.email.length === 0 || req.body.password.length === 0) {
     res.sendStatus(400);
   }
   if (alreadyRegisteredCheck(req.body.email) === false) {
@@ -180,7 +180,7 @@ app.get("/urls/new", (req, res) => {
   if (req.cookies["user_id"] === undefined) {
     res.redirect("/loginPrompt");
   } else {
-    const templateVars = { 
+    const templateVars = {
       user: users[req.cookies['user_id']]
     };
     res.render("urls_new", templateVars);
@@ -192,7 +192,7 @@ app.post("/urls/new", (req, res) => {
     res.redirect("/loginPrompt");
   } else {
     const shortenedURL = generateRandomString();
-    urlDatabase[shortenedURL] = { longURL: req.body.longURL, userID: req.cookies['user_id'] }
+    urlDatabase[shortenedURL] = { longURL: req.body.longURL, userID: req.cookies['user_id'] };
     res.redirect(`/urls/${shortenedURL}`);
   }
 });
@@ -203,18 +203,17 @@ app.get("/urls/:shortURL", (req, res) => {
   if (req.cookies['user_id'] === undefined) {
     res.redirect("/loginPrompt");
   } else {
-    const templateVars = { 
+    const templateVars = {
       user: users[req.cookies['user_id']],
-      shortURL: req.params.shortURL, 
-      longURL: urlDatabase[req.params.shortURL].longURL 
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL
     };
     res.render("urls_show", templateVars);
   }
 });
 
 app.get("/u/:shortURL", (req, res) => {  // clicking shortURL links to longURL
-  console.log(`params:`, req.params)
-  const site =  urlDatabase[req.params.shortURL].longURL
+  const site =  urlDatabase[req.params.shortURL].longURL;
   res.redirect(site);
 });
 
