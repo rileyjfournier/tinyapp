@@ -38,6 +38,14 @@ function generateRandomString() {
   return string;
 }
 
+function alreadyRegisteredCheck(email) {
+  for (const id in users) {
+    if (users[id].email === email) {
+      return false;
+    }
+  }
+}
+
 // page displaying all shortURLs with their original, longURL
 app.get("/urls", (req, res) => {
   const templateVars = { 
@@ -45,7 +53,6 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase 
   };
   res.render("urls_index", templateVars);
-  console.log('Current User:', templateVars.currentUser.user_id)
 });
 
 
@@ -57,6 +64,7 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/urls");
+  console.log(users);
 });
 
 
@@ -75,14 +83,21 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const userID = generateRandomString();
-  users[userID] = {
-    id: userID,
-    email: req.body.email,
-    password: req.body.password
-  };
-  res.cookie("user_id", userID);
-  res.redirect("/urls");
+  if (req.body.email.length === 0 || req.body.password.length === 0) {
+    res.sendStatus(400);
+  }
+  if (alreadyRegisteredCheck(req.body.email) === false) {
+    res.sendStatus(400);
+  } else {
+    const userID = generateRandomString();
+    users[userID] = {
+      id: userID,
+      email: req.body.email,
+      password: req.body.password
+    };
+    res.cookie("user_id", userID);
+    res.redirect("/urls");
+  }
 });
 
 
