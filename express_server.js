@@ -27,6 +27,25 @@ const users = {
   }
 };
 
+function loginChecker(email, password) {
+  let emailMatch = false; 
+  let passwordMatch = false;
+  let user_id;
+  for (const id in users) {
+    if (users[id].email === email) {
+      emailMatch = true;
+    }
+    if (users[id].password === password) {
+      user_id = id;
+      passwordMatch = true;
+    }
+  }
+  if (emailMatch === true && passwordMatch === true) {
+    return user_id;
+  } else {
+    return false;
+  }
+};
 
 function generateRandomString() {
   let string = "";
@@ -57,14 +76,33 @@ app.get("/urls", (req, res) => {
 
 
 // login && logout with cookie management 
-app.post("/login", (req, res) => {
-  res.redirect("/urls");
+app.get("/login", (req, res) => {
+  const templateVars = { 
+    user: users[req.cookies['user_id']]
+  };
+  res.render("login", templateVars);
 });
+
+app.post("/login", (req, res) => {
+  if (loginChecker(req.body.email, req.body.password) === false) {
+    res.sendStatus(403)
+  } else {
+    let currentUser;
+    currentUser = loginChecker(req.body.email, req.body.password);
+    res.cookie("user_id", currentUser);
+    res.redirect("/urls");
+  }
+})
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/urls");
-  console.log(users);
+});
+
+
+// login button to link to login page
+app.post("/loginLink", (req, res) => {
+  res.redirect("/login");
 });
 
 
@@ -83,7 +121,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  if (req.body.email.length === 0 || req.body.password.length === 0) {
+  if (req.body.email.length === 0 || req.body.password.length === 0) {   // make me into a function *******
     res.sendStatus(400);
   }
   if (alreadyRegisteredCheck(req.body.email) === false) {
