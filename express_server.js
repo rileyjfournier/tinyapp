@@ -148,9 +148,13 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls/new", (req, res) => {
-  const shortenedURL = generateRandomString();
-  urlDatabase[shortenedURL] = req.body.longURL;
-  res.redirect(`/urls/${shortenedURL}`);
+  if (req.cookies['user_id']) {
+    const shortenedURL = generateRandomString();
+    urlDatabase[shortenedURL] = req.body.longURL;
+    res.redirect(`/urls/${shortenedURL}`);
+  } else {
+    res.redirect(`/login`)
+  }
 });
 
 
