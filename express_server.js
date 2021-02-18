@@ -34,7 +34,7 @@ const users = {
 
 // this function will return an object identical to urlDatabase,
 // but will only include urls from specified userID
-function urlsForUser(id) {
+const urlsForUser = function(id) {
   let usersUrls = [];
   let usersDatabase = {};
   for (const url in urlDatabase) {
@@ -48,7 +48,7 @@ function urlsForUser(id) {
   return usersDatabase;
 }
 
-function loginChecker(email, password) {
+const loginChecker = function(email, password) {
   let emailMatch = false;
   let passwordMatch = false;
   let user_id;
@@ -68,7 +68,7 @@ function loginChecker(email, password) {
   }
 }
 
-function generateRandomString() {
+const generateRandomString = function() {
   let string = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const characters_length = characters.length;
@@ -78,10 +78,10 @@ function generateRandomString() {
   return string;
 }
 
-function alreadyRegisteredCheck(email) {
-  for (const id in users) {
-    if (users[id].email === email) {
-      return false;
+const getUserByEmail = function(email, database) {
+  for (const id in database) {
+    if (database[id].email === email) {
+      return id;
     }
   }
 }
@@ -164,7 +164,7 @@ app.post("/register", (req, res) => {
   if (req.body.email.length === 0 || req.body.password.length === 0) {
     res.sendStatus(400);
   }
-  if (alreadyRegisteredCheck(req.body.email) === false) {
+  if (getUserByEmail(req.body.email, users)) {
     res.sendStatus(400);
   } else {
     const userID = generateRandomString();
