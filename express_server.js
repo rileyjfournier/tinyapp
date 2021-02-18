@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 const app = express();
 const PORT = 8080;
 
@@ -53,7 +54,7 @@ function loginChecker(email, password) {
       emailMatch = true;
       user_id = id;
     }
-    if (users[id].password === password) {
+    if (bcrypt.compareSync(password, users[id].password)) {
       passwordMatch = true;
     }
   }
@@ -164,10 +165,12 @@ app.post("/register", (req, res) => {
     res.sendStatus(400);
   } else {
     const userID = generateRandomString();
+    const password = req.body.password
+    const hashedPassword = bcrypt.hashSync(password, 10);
     users[userID] = {
       id: userID,
       email: req.body.email,
-      password: req.body.password
+      password: hashedPassword
     };
     res.cookie("user_id", userID);
     res.redirect("/urls");
@@ -249,23 +252,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 
 
-
-
-// other routes ...
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+app.get("*", (req, res) => {
+  res.redirect('/login');
 });
 
 
